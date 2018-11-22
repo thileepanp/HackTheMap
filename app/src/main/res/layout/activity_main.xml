@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <android.support.constraint.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent" android:layout_marginStart="200dp"
+            android:background="@color/colorPrimaryDark" android:id="@+id/MapConstraintLayout">
+
+        <fragment
+                class="com.here.android.mpa.mapping.MapFragment"
+                android:id="@+id/mapfragment"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+    </android.support.constraint.ConstraintLayout>
+    <android.support.constraint.ConstraintLayout
+            android:layout_width="200dp"
+            android:layout_height="match_parent" android:background="@color/colorAccent"
+            app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" android:id="@+id/sideConstraintLayout">
+
+        <TextView
+                android:id="@+id/txt_speed"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/txt_speed"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body1" android:lineSpacingExtra="36sp"/>
+        <ImageButton
+                android:layout_width="0dp"
+                android:layout_height="200dp" app:srcCompat="@drawable/mic_btn"
+                android:id="@+id/micButton" app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" app:layout_constraintBottom_toBottomOf="parent"
+                android:scaleType="fitCenter" android:contentDescription="TODO"
+                android:background="@color/common_google_signin_btn_text_dark_disabled" android:layout_marginEnd="8dp"
+                android:layout_marginStart="8dp" android:layout_marginBottom="8dp"/>
+        <ToggleButton
+                android:text="ToggleButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content" android:id="@+id/toggleButton3"
+                app:layout_constraintStart_toStartOf="parent" android:layout_marginBottom="20dp"
+                app:layout_constraintBottom_toTopOf="@+id/micButton"
+                tools:text="Private" android:textOff="Public" android:textOn="Private" android:layout_marginEnd="8dp"
+                app:layout_constraintEnd_toEndOf="parent"/>
+    </android.support.constraint.ConstraintLayout>
+
+</android.support.constraint.ConstraintLayout>
