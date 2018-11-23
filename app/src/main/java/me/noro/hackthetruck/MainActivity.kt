@@ -108,19 +108,29 @@ class MainActivity : AppCompatActivity(), IVehicleDataSubscriber {
             }
         }
 
-        companyToggleButton.setOnClickListener {
+        companyButton.setOnClickListener {
+            companyButton.isChecked = false
             privateToggleButton.isChecked = false
             publicToggleButton.isChecked = false
+            channelConstraintLayout.visibility = View.GONE
+            dropMakerOnMap()
+
         }
 
-        privateToggleButton.setOnClickListener {
+        privateButton.setOnClickListener {
+            privateButton.isChecked = false
             companyToggleButton.isChecked = false
             publicToggleButton.isChecked = false
+            channelConstraintLayout.visibility = View.GONE
+            dropMakerOnMap()
         }
 
-        publicToggleButton.setOnClickListener {
+        publicButton.setOnClickListener {
+            publicButton.isChecked = false
             privateToggleButton.isChecked = false
             companyToggleButton.isChecked = false
+            channelConstraintLayout.visibility = View.GONE
+            dropMakerOnMap()
         }
 
         mapFragment = fragmentManager.findFragmentById(R.id.mapfragment) as? MapFragment
@@ -279,7 +289,8 @@ class MainActivity : AppCompatActivity(), IVehicleDataSubscriber {
         micImageView.visibility = View.VISIBLE
     }
 
-    fun dropMakerOnMap(bagOfWords: ArrayList<String>){
+
+    fun dropMakerOnMap(bagOfWords: ArrayList<String>? = null){
 
         val icons = listOf<Int>(
             R.drawable.map_icon_joke,
@@ -412,7 +423,8 @@ class MainActivity : AppCompatActivity(), IVehicleDataSubscriber {
         override fun onResults(bundle: Bundle?) {
 
             val results = bundle!!.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)
-            dropMakerOnMap(results)
+            channelConstraintLayout.visibility = View.VISIBLE
+
             Log.d("SPEECH", "word is $results")
 
         }
