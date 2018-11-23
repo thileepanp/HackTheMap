@@ -5,9 +5,15 @@
 package me.noro.hackthetruck
 
 import android.content.Context
+import android.content.Intent
+import android.os.CountDownTimer
 import android.os.Bundle
+import android.speech.RecognitionListener
+import android.speech.RecognizerIntent
+import android.speech.SpeechRecognizer
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
+import android.view.View
 import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_main.*
 import me.noro.hackthetruck.repository.vehicle.IVehicleDataSubscriber
@@ -17,15 +23,23 @@ import com.here.android.mpa.common.GeoCoordinate
 import com.here.android.mpa.common.OnEngineInitListener
 import com.here.android.mpa.mapping.Map
 import com.here.android.mpa.mapping.MapFragment
+import com.here.android.mpa.mapping.MapMarker
+import java.io.IOException
+
 
 ///
 // Here we have our basic main activity. This is the entry point of connecting to the vehicle
 ///
 class MainActivity : AppCompatActivity(), IVehicleDataSubscriber {
 
+    private val USERNAME = ""
+    private val PASSWORD = ""
+    private val MAX_COUNTDOWN_TIME: Long = 10000
+    private var isRecording = false
+    private var countDownTimer: CountDownTimer? = null
     private var map: Map? = null
     private var mapFragment: MapFragment? = null
-    //private var speechService: SpeechToText? = null
+    private var speechService: SpeechRecognizer? = null
 
     companion object {
         private const val TAG = "MAIN"
@@ -63,6 +77,21 @@ class MainActivity : AppCompatActivity(), IVehicleDataSubscriber {
 
     private fun initialize() {
 
+        speechService = SpeechRecognizer.createSpeechRecognizer(applicationContext)
+        speechService?.setRecognitionListener(DriverRecognitionListener())
+        countDownTextView.text = "10"
+        countDownTextView.visibility = View.GONE
+
+        recordImageButton.setOnClickListener {
+            isRecording = !isRecording
+
+            if (isRecording) {
+                startListening()
+            }else {
+                speechService?.cancel()
+
+            }
+        }
 
         mapFragment = fragmentManager.findFragmentById(R.id.mapfragment) as? MapFragment
         mapFragment?.init(object : OnEngineInitListener {
@@ -70,7 +99,7 @@ class MainActivity : AppCompatActivity(), IVehicleDataSubscriber {
                if (error == OnEngineInitListener.Error.NONE) {
                    map = mapFragment?.map
                    if (map != null) {
-                       val geoCoordinate = GeoCoordinate(49.196261, -123.004773, 0.0)
+                       val geoCoordinate = GeoCoordinate(60.1867, 24.8277, 0.0)
                        map!!.setCenter(geoCoordinate, Map.Animation.NONE)
                        map!!.zoomLevel = (map!!.maxZoomLevel + map!!.minZoomLevel) / 2
                    } else {
@@ -86,6 +115,58 @@ class MainActivity : AppCompatActivity(), IVehicleDataSubscriber {
         })
 
 }
+
+    private fun startListening(){
+        countDownTextView.text = "${MAX_COUNTDOWN_TIME / 1000}"
+        countDownTextView.visibility = View.VISIBLE
+        micImageView.visibility = View.GONE
+
+        val mSpeechRecognizerIntent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+        mSpeechRecognizerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+                RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+        mSpeechRecognizerIntent.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE,
+                applicationContext.packageName);
+        mSpeechRecognizerIntent.putExtra(RecognizerIntent.EXTRA_CONFIDENCE_SCORES, true)
+        mSpeechRecognizerIntent.putExtra(RecognizerIntent.EXTRA_RESULTS,true)
+        speechService?.startListening(mSpeechRecognizerIntent)
+
+
+    }
+
+    fun countDownListener() {
+        countDownTimer = object: CountDownTimer(MAX_COUNTDOWN_TIME, 1000) {
+            override fun onTick(millisUntilFinished: Long) {
+                countDownTextView.text = "${millisUntilFinished / 1000}"
+            }
+
+            override fun onFinish() {
+                countDownTextView.visibility = View.GONE
+                micImageView.visibility = View.VISIBLE
+            }
+        }
+
+        countDownTimer?.start()
+    }
+
+    fun endCountDownListener() {
+        countDownTimer?.cancel()
+        countDownTextView.visibility = View.GONE
+        micImageView.visibility = View.VISIBLE
+    }
+
+    fun dropMakerOnMap(bagOfWords: ArrayList<String>){
+        val myImage = com.here.android.mpa.common.Image()
+        try {
+            myImage.setImageResource(R.drawable.mic_trans)
+        } catch (e: IOException) {
+            finish()
+        }
+
+        val myMapMarker = MapMarker(GeoCoordinate(60.1867, 24.8277, 0.0),myImage )
+        map?.addMapObject(myMapMarker);
+    }
+
+
 
     private fun connectVehicle(context: Context) {
         try {
@@ -132,11 +213,57 @@ class MainActivity : AppCompatActivity(), IVehicleDataSubscriber {
         vehicleDataRepository.disconnectVehicle()
         vehicleDataRepository.deinitializeSdk()
         vehicleDataRepository.remove(this)
+        speechService?.destroy()
+        countDownTimer?.cancel()
     }
 
     override fun onResume() {
         // We're back on... so also tell that our variable
         isInForeground = true
         super.onResume()
+    }
+
+    inner class DriverRecognitionListener: RecognitionListener {
+
+        override fun onReadyForSpeech(p0: Bundle?) {
+            System.out.print("Error is")
+        }
+
+        override fun onRmsChanged(p0: Float) {
+            System.out.print("Error is")
+        }
+
+        override fun onBufferReceived(p0: ByteArray?) {
+            System.out.print("Error is")
+        }
+
+        override fun onPartialResults(p0: Bundle?) {
+            System.out.print("Error is")
+        }
+
+        override fun onEvent(p0: Int, p1: Bundle?) {
+            System.out.print("Error is")
+        }
+
+        override fun onBeginningOfSpeech() {
+            countDownListener()
+        }
+
+        override fun onEndOfSpeech() {
+            endCountDownListener()
+        }
+
+        override fun onError(error: Int) {
+           System.out.print("Error is $error")
+        }
+
+        override fun onResults(bundle: Bundle?) {
+
+            val results = bundle!!.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)
+            dropMakerOnMap(results)
+            Log.d("SPEECH", "word is $results")
+
+        }
+
     }
 }
