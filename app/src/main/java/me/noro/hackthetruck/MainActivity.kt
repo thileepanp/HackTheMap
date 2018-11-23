@@ -8,14 +8,17 @@ import android.Manifest
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.PointF
 import android.os.CountDownTimer
 import android.os.Bundle
 import android.speech.RecognitionListener
 import android.speech.RecognizerIntent
 import android.speech.SpeechRecognizer
+import android.support.constraint.ConstraintSet
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
+import android.transition.TransitionManager
 import android.util.Log
 import android.view.View
 import android.widget.Toast
@@ -25,11 +28,13 @@ import me.noro.hackthetruck.repository.vehicle.VehicleDataRepository
 import me.noro.hackthetruck.services.DataSimulationService
 import com.here.android.mpa.common.GeoCoordinate
 import com.here.android.mpa.common.OnEngineInitListener
+import com.here.android.mpa.common.ViewObject
 import com.here.android.mpa.mapping.Map
 import com.here.android.mpa.mapping.MapFragment
+import com.here.android.mpa.mapping.MapGesture
 import com.here.android.mpa.mapping.MapMarker
 import java.io.IOException
-import java.io.InputStream
+import java.util.*
 
 //import java.io.InputStream
 
@@ -39,8 +44,6 @@ import java.io.InputStream
 ///
 class MainActivity : AppCompatActivity(), IVehicleDataSubscriber {
 
-    private val USERNAME = ""
-    private val PASSWORD = ""
     private val MAX_COUNTDOWN_TIME: Long = 10000
     private var isRecording = false
     private var countDownTimer: CountDownTimer? = null
@@ -48,11 +51,6 @@ class MainActivity : AppCompatActivity(), IVehicleDataSubscriber {
     private var mapFragment: MapFragment? = null
     private var speechService: SpeechRecognizer? = null
 
-    //private var speechService: SpeechToText? = null
-    //private var audioPlayer = StreamPlayer()
-    //private var microphoneHelper: MicrophoneHelper? = null
-    //private var capture: MicrophoneInputStream? = null
-    //private var listening = false
 
     companion object {
         private const val TAG = "MAIN"
@@ -92,18 +90,17 @@ class MainActivity : AppCompatActivity(), IVehicleDataSubscriber {
 
         speechService = SpeechRecognizer.createSpeechRecognizer(applicationContext)
         speechService?.setRecognitionListener(DriverRecognitionListener())
-        //microphoneHelper = MicrophoneHelper(this)
-        //speechService = initSpeechToTextService()
 
         countDownTextView.text = "10"
         countDownTextView.visibility = View.GONE
+
+        playConstraintLayout.visibility = View.GONE
 
         recordImageButton.setOnClickListener {
             isRecording = !isRecording
 
             if (isRecording) {
                 startListening()
-               // startSpeechRecognition()
 
             }else {
                 speechService?.cancel()
@@ -139,6 +136,70 @@ class MainActivity : AppCompatActivity(), IVehicleDataSubscriber {
                        System.out.println("ERROR: map is null");
                    }
 
+                   if (mapFragment?.mapGesture != null) {
+                       print("ok")
+                   }
+                   mapFragment?.mapGesture?.addOnGestureListener(object: MapGesture.OnGestureListener.OnGestureListenerAdapter() {
+                       override fun onLongPressRelease() {
+                       }
+
+                       override fun onRotateEvent(p0: Float): Boolean {
+                           return false
+                       }
+
+                       override fun onMultiFingerManipulationStart() {
+                       }
+
+                       override fun onMultiFingerManipulationEnd() {
+                       }
+
+                       override fun onPinchLocked() {
+                       }
+
+                       override fun onPinchZoomEvent(p0: Float, p1: PointF?): Boolean {
+                           return false
+                       }
+
+                       override fun onTapEvent(p0: PointF?): Boolean {
+                           return true
+                       }
+
+                       override fun onPanStart() {
+                       }
+
+                       override fun onDoubleTapEvent(p0: PointF?): Boolean {
+                           return false
+                       }
+
+                       override fun onPanEnd() {
+                       }
+
+                       override fun onTiltEvent(p0: Float): Boolean {
+                           return false
+                       }
+
+                       override fun onRotateLocked() {
+                       }
+
+                       override fun onLongPressEvent(p0: PointF?): Boolean {
+                           return false
+                       }
+
+                       override fun onTwoFingerTapEvent(p0: PointF?): Boolean {
+                           return false
+                       }
+
+                       override fun onMapObjectsSelected(objects: MutableList<ViewObject>): Boolean {
+                           print("ok")
+                           for (marker in objects) {
+                               animatePlayBar()
+                           }
+                           return false
+                       }
+
+
+                   })
+
                }else  {
 
                    System.out.println("ERROR: Cannot initialize Map Fragment $error");
@@ -147,7 +208,13 @@ class MainActivity : AppCompatActivity(), IVehicleDataSubscriber {
 
         })
 
-}
+
+
+
+
+
+
+    }
 
     private fun askForPermession() {
 
@@ -171,10 +238,6 @@ class MainActivity : AppCompatActivity(), IVehicleDataSubscriber {
            print("ok")
         }
     }
-
-
-
-
 
 
     private fun startListening(){
@@ -235,11 +298,27 @@ class MainActivity : AppCompatActivity(), IVehicleDataSubscriber {
             finish()
         }
 
-        val myMapMarker = MapMarker(GeoCoordinate(60.1867, 24.8277, 0.0),myImage )
+        val lat = 60.186 + ((Random().nextInt((9 + 1) - 1) +  1).toFloat() / 100)
+        val lng = 24.827 +  ((Random().nextInt((9 + 1) - 1) +  1).toFloat() / 100)
+
+        val myMapMarker = MapMarker(GeoCoordinate(lat, lng, 0.0),myImage )
+
         map?.addMapObject(myMapMarker);
     }
 
 
+   private fun animatePlayBar() {
+       sideConstraintLayout.visibility = View.GONE
+       playConstraintLayout.visibility = View.VISIBLE
+       val constraintSetExpanded = ConstraintSet()
+       constraintSetExpanded.clone(playConstraintLayout)
+       val constraintSetShink = ConstraintSet()
+       constraintSetShink.clone(playConstraintLayout)
+       constraintSetShink.setTranslationX(R.id.playConstraintLayout, -200.0f)
+       TransitionManager.beginDelayedTransition(playConstraintLayout)
+       val constraint = constraintSetShink
+       constraint.applyTo(playConstraintLayout)
+   }
 
     private fun connectVehicle(context: Context) {
         try {
@@ -259,7 +338,7 @@ class MainActivity : AppCompatActivity(), IVehicleDataSubscriber {
         // Only do something with incoming values, if the app is in foreground
         if (isInForeground) {
             // Show the new incoming value on the ui
-            txt_speed.text = speed.toInt().toString()
+            txt_info.text = speed.toInt().toString()
         }
     }
 
