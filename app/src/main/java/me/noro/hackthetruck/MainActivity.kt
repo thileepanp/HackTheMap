@@ -4,13 +4,17 @@
 
 package me.noro.hackthetruck
 
+import android.Manifest
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.CountDownTimer
 import android.os.Bundle
 import android.speech.RecognitionListener
 import android.speech.RecognizerIntent
 import android.speech.SpeechRecognizer
+import android.support.v4.app.ActivityCompat
+import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.View
@@ -25,6 +29,9 @@ import com.here.android.mpa.mapping.Map
 import com.here.android.mpa.mapping.MapFragment
 import com.here.android.mpa.mapping.MapMarker
 import java.io.IOException
+import java.io.InputStream
+
+//import java.io.InputStream
 
 
 ///
@@ -40,6 +47,12 @@ class MainActivity : AppCompatActivity(), IVehicleDataSubscriber {
     private var map: Map? = null
     private var mapFragment: MapFragment? = null
     private var speechService: SpeechRecognizer? = null
+
+    //private var speechService: SpeechToText? = null
+    //private var audioPlayer = StreamPlayer()
+    //private var microphoneHelper: MicrophoneHelper? = null
+    //private var capture: MicrophoneInputStream? = null
+    //private var listening = false
 
     companion object {
         private const val TAG = "MAIN"
@@ -61,7 +74,7 @@ class MainActivity : AppCompatActivity(), IVehicleDataSubscriber {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
+        askForPermession()
         // Here we inject everything defined within the injector like any depending services
         // or repositories
         Injector.inject(this)
@@ -79,6 +92,9 @@ class MainActivity : AppCompatActivity(), IVehicleDataSubscriber {
 
         speechService = SpeechRecognizer.createSpeechRecognizer(applicationContext)
         speechService?.setRecognitionListener(DriverRecognitionListener())
+        //microphoneHelper = MicrophoneHelper(this)
+        //speechService = initSpeechToTextService()
+
         countDownTextView.text = "10"
         countDownTextView.visibility = View.GONE
 
@@ -87,10 +103,27 @@ class MainActivity : AppCompatActivity(), IVehicleDataSubscriber {
 
             if (isRecording) {
                 startListening()
+               // startSpeechRecognition()
+
             }else {
                 speechService?.cancel()
 
             }
+        }
+
+        companyToggleButton.setOnClickListener {
+            privateToggleButton.isChecked = false
+            publicToggleButton.isChecked = false
+        }
+
+        privateToggleButton.setOnClickListener {
+            companyToggleButton.isChecked = false
+            publicToggleButton.isChecked = false
+        }
+
+        publicToggleButton.setOnClickListener {
+            privateToggleButton.isChecked = false
+            companyToggleButton.isChecked = false
         }
 
         mapFragment = fragmentManager.findFragmentById(R.id.mapfragment) as? MapFragment
@@ -116,7 +149,36 @@ class MainActivity : AppCompatActivity(), IVehicleDataSubscriber {
 
 }
 
+    private fun askForPermession() {
+
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.READ_CONTACTS)
+                != PackageManager.PERMISSION_GRANTED) {
+            print("not grandted")
+            // Permission is not granted
+            // Should we show an explanation?
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                            Manifest.permission.RECORD_AUDIO)) {
+
+            } else {
+                // No explanation needed, we can request the permission.
+                ActivityCompat.requestPermissions(this,
+                        arrayOf(Manifest.permission.RECORD_AUDIO),
+                        1)
+
+            }
+        } else {
+           print("ok")
+        }
+    }
+
+
+
+
+
+
     private fun startListening(){
+
         countDownTextView.text = "${MAX_COUNTDOWN_TIME / 1000}"
         countDownTextView.visibility = View.VISIBLE
         micImageView.visibility = View.GONE
@@ -155,9 +217,20 @@ class MainActivity : AppCompatActivity(), IVehicleDataSubscriber {
     }
 
     fun dropMakerOnMap(bagOfWords: ArrayList<String>){
+
+        val icons = listOf<Int>(
+            R.drawable.map_icon_joke,
+            R.drawable.map_icon_no,
+            R.drawable.map_icon_park,
+            R.drawable.map_icon_speed,
+            R.drawable.map_icon_toilet,
+                R.drawable.map_icon_slip)
+
+        val random = icons.shuffled().take(1)[0]
+
         val myImage = com.here.android.mpa.common.Image()
         try {
-            myImage.setImageResource(R.drawable.mic_trans)
+            myImage.setImageResource(random)
         } catch (e: IOException) {
             finish()
         }
@@ -266,4 +339,5 @@ class MainActivity : AppCompatActivity(), IVehicleDataSubscriber {
         }
 
     }
+
 }
