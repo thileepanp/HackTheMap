@@ -161,6 +161,11 @@ class MainActivity : AppCompatActivity(), IVehicleDataSubscriber {
             pauseButton.visibility = View.GONE
         }
 
+        simulateBtn.setOnClickListener {
+            dropWarningMakerOnMap(WARNING_SPEED)
+
+        }
+
         mapFragment = fragmentManager.findFragmentById(R.id.mapfragment) as? MapFragment
         mapFragment?.init(object : OnEngineInitListener {
             override fun onEngineInitializationCompleted(error: OnEngineInitListener.Error) {
@@ -407,7 +412,7 @@ class MainActivity : AppCompatActivity(), IVehicleDataSubscriber {
             if (speed.toInt() >= MAX_SPEED_WARNING) {
                 if (!droppedOverSpeed) {
                     droppedOverSpeed = true
-                    dropWarningMakerOnMap(WARNING_SPEED)
+                    //dropWarningMakerOnMap(WARNING_SPEED)
                 }
             }
         }
@@ -423,7 +428,7 @@ class MainActivity : AppCompatActivity(), IVehicleDataSubscriber {
             if (amount.toInt() >= MAX_FUEL_CONSUMPTION_WARNING) {
                 if (!droppedFuelConsumption) {
                     droppedFuelConsumption = true
-                    dropWarningMakerOnMap(WARNING_FUEL)
+                    //dropWarningMakerOnMap(WARNING_FUEL)
                 }
             }
         }
