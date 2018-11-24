@@ -108,27 +108,18 @@ class MainActivity : AppCompatActivity(), IVehicleDataSubscriber {
             }
         }
 
-        companyButton.setOnClickListener {
-            companyButton.isChecked = false
-            privateToggleButton.isChecked = false
-            publicToggleButton.isChecked = false
+        companyBtn.setOnClickListener {
             channelConstraintLayout.visibility = View.GONE
             dropMakerOnMap()
 
         }
 
-        privateButton.setOnClickListener {
-            privateButton.isChecked = false
-            companyToggleButton.isChecked = false
-            publicToggleButton.isChecked = false
+        privateBtn.setOnClickListener {
             channelConstraintLayout.visibility = View.GONE
             dropMakerOnMap()
         }
 
-        publicButton.setOnClickListener {
-            publicButton.isChecked = false
-            privateToggleButton.isChecked = false
-            companyToggleButton.isChecked = false
+        publicBtn.setOnClickListener {
             channelConstraintLayout.visibility = View.GONE
             dropMakerOnMap()
         }

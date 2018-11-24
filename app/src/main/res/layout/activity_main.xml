@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".MainActivity">
+                                             xmlns:app="http://schemas.android.com/apk/res-auto"
+                                             xmlns:tools="http://schemas.android.com/tools"
+                                             android:layout_width="match_parent"
+                                             android:layout_height="match_parent"
+                                             tools:context=".MainActivity">
 
     <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
@@ -26,7 +26,7 @@
             android:layout_height="match_parent"
             app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent" android:id="@+id/sideConstraintLayout"
-    >
+            android:background="@drawable/back_side">
 
         <TextView
                 android:id="@+id/txt_info"
@@ -39,11 +39,11 @@
                 android:textAppearance="@style/TextAppearance.AppCompat.Body1" android:lineSpacingExtra="36sp"/>
         <ImageButton
                 android:layout_width="0dp"
-                android:layout_height="0dp" app:srcCompat="@drawable/button" android:id="@+id/recordImageButton"
+                android:layout_height="0dp" app:srcCompat="@drawable/btns" android:id="@+id/recordImageButton"
                 app:layout_constraintStart_toStartOf="parent" app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent" android:layout_marginBottom="8dp"
-                android:layout_marginEnd="8dp" android:layout_marginStart="8dp"
-                app:layout_constraintTop_toTopOf="parent" android:layout_marginTop="265dp"
+                android:layout_marginEnd="12dp" android:layout_marginStart="8dp"
+                app:layout_constraintTop_toTopOf="parent" android:layout_marginTop="305dp"
                 android:scaleType="fitCenter" android:background="@android:color/transparent"/>
         <ImageView
                 android:layout_width="wrap_content"
@@ -61,36 +61,9 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 android:textAppearance="@style/TextAppearance.AppCompat.Large" android:fontFamily="monospace"
                 android:typeface="sans" android:textSize="86sp" android:textStyle="bold"
-                android:textColor="@color/colorAccent" android:layout_marginBottom="8dp"
+                android:textColor="@android:color/background_light" android:layout_marginBottom="8dp"
                 app:layout_constraintBottom_toBottomOf="parent" android:layout_marginTop="8dp"
                 app:layout_constraintTop_toTopOf="@+id/recordImageButton"/>
-        <ToggleButton
-                android:text="ToggleButton"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:id="@+id/publicToggleButton" app:layout_constraintEnd_toEndOf="parent"
-                android:layout_marginEnd="8dp" app:layout_constraintStart_toStartOf="parent"
-                android:layout_marginStart="8dp" android:layout_marginBottom="8dp"
-                app:layout_constraintBottom_toTopOf="@+id/recordImageButton" android:textOff="Public"
-                android:textOn="Public" android:checked="true"/>
-        <ToggleButton
-                android:text="ToggleButton"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:id="@+id/privateToggleButton"
-                app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="8dp"
-                app:layout_constraintStart_toStartOf="parent" android:layout_marginStart="8dp"
-                android:layout_marginBottom="8dp" app:layout_constraintBottom_toTopOf="@+id/publicToggleButton"
-                android:textOff="Private" android:textOn="Private"/>
-        <ToggleButton
-                android:text="ToggleButton"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:id="@+id/companyToggleButton" app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                android:layout_marginStart="8dp"
-                android:layout_marginBottom="7dp" app:layout_constraintBottom_toTopOf="@+id/privateToggleButton"
-                android:textOff="Company" android:textOn="Company" android:layout_marginEnd="8dp"/>
     </android.support.constraint.ConstraintLayout>
     <android.support.constraint.ConstraintLayout
             android:layout_width="200dp"
@@ -115,36 +88,34 @@
     <android.support.constraint.ConstraintLayout
             android:layout_height="match_parent" app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent" android:layout_marginTop="174dp"
-            android:layout_marginBottom="180dp"
+            app:layout_constraintBottom_toBottomOf="parent" android:layout_marginTop="150dp"
+            android:layout_marginBottom="150dp"
             android:background="@android:color/transparent" android:id="@+id/channelConstraintLayout"
-            android:visibility="invisible"
-            android:layout_width="700dp">
+            android:layout_width="860dp" app:layout_constraintStart_toStartOf="parent" android:visibility="invisible">
 
-        <ToggleButton
-                android:text="ToggleButton"
-                android:layout_width="200dp"
-                android:layout_height="wrap_content" android:id="@+id/companyButton"
-                app:layout_constraintStart_toEndOf="@+id/privateButton" android:layout_marginStart="50dp"
-                app:layout_constraintTop_toTopOf="parent" app:layout_constraintBottom_toBottomOf="parent"
-                android:layout_marginBottom="55dp" android:layout_marginTop="54dp" android:textOff="Company"
-                android:textOn="Company"/>
-        <ToggleButton
-                android:text="ToggleButton"
-                android:layout_width="200dp"
-                android:layout_height="wrap_content" android:id="@+id/privateButton"
-                app:layout_constraintStart_toEndOf="@+id/publicButton" app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent" android:layout_marginBottom="55dp"
-                android:layout_marginTop="50dp" android:layout_marginStart="50dp" android:textOff="Private"
-                android:textOn="Private"/>
-        <ToggleButton
-                android:text="ToggleButton"
-                android:layout_width="200dp"
-                android:layout_height="wrap_content" android:id="@+id/publicButton"
-                app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent" android:layout_marginBottom="55dp"
-                android:layout_marginStart="20dp" android:layout_marginTop="50dp" android:textOff="Public"
-                android:textOn="Public"/>
+        <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" app:srcCompat="@drawable/company_btn"
+                android:id="@+id/companyBtn" app:layout_constraintStart_toEndOf="@+id/publicBtn"
+                android:layout_marginStart="60dp" android:layout_marginBottom="8dp"
+                app:layout_constraintBottom_toBottomOf="parent" android:layout_marginTop="8dp"
+                app:layout_constraintTop_toTopOf="parent" android:background="@android:color/transparent"/>
+        <ImageButton
+                android:layout_width="wrap_content"
+                app:srcCompat="@drawable/private_btn"
+                android:id="@+id/privateBtn" android:background="@android:color/transparent"
+                android:layout_marginBottom="8dp" app:layout_constraintBottom_toBottomOf="parent"
+                android:layout_marginTop="8dp" app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent" android:layout_marginStart="16dp"
+                app:layout_constraintVertical_bias="0.493" android:layout_height="wrap_content"/>
+        <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" app:srcCompat="@drawable/public_btn"
+                android:id="@+id/publicBtn" app:layout_constraintStart_toEndOf="@+id/privateBtn"
+                android:layout_marginStart="60dp"
+                android:layout_marginBottom="8dp" app:layout_constraintBottom_toBottomOf="parent"
+                android:layout_marginTop="8dp" app:layout_constraintTop_toTopOf="parent"
+                android:background="@android:color/transparent"/>
     </android.support.constraint.ConstraintLayout>
 
 </android.support.constraint.ConstraintLayout>
