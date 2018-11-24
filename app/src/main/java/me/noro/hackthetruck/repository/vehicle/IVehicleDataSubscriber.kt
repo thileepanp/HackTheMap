@@ -11,4 +11,5 @@ package me.noro.hackthetruck.repository.vehicle
 interface IVehicleDataSubscriber {
     fun onVehicleSpeed(speed: Float)
     fun onTotalVehicleDistance(totalDistance: Long)
+    fun onFuelConsumptionHigh(amount: Float)
 }

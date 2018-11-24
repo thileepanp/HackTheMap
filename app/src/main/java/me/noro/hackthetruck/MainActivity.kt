@@ -43,7 +43,12 @@ import java.util.*
 // Here we have our basic main activity. This is the entry point of connecting to the vehicle
 ///
 class MainActivity : AppCompatActivity(), IVehicleDataSubscriber {
+
+
     private val WARNING_SPEED = 100
+    private val WARNING_FUEL = 101
+    private val WARNING_DISTANCE = 102
+    private val MAX_FUEL_CONSUMPTION_WARNING = 44.9
     private val MAX_SPEED_WARNING = 94
     private val MAX_COUNTDOWN_TIME: Long = 10000
     private var isRecording = false
@@ -51,7 +56,8 @@ class MainActivity : AppCompatActivity(), IVehicleDataSubscriber {
     private var map: Map? = null
     private var mapFragment: MapFragment? = null
     private var speechService: SpeechRecognizer? = null
-
+    private var droppedOverSpeed = false //just for demo so that we don't get 2 or more markers
+    private var droppedFuelConsumption = false //just for demo so that we don't get 2 or more markers
 
     companion object {
         private const val TAG = "MAIN"
@@ -317,6 +323,7 @@ class MainActivity : AppCompatActivity(), IVehicleDataSubscriber {
 
        when(id) {
            WARNING_SPEED -> markerIcon = R.drawable.warning_speed_icon
+           WARNING_FUEL -> markerIcon = R.drawable.warning_fuel_icon
        }
 
         val myImage = com.here.android.mpa.common.Image()
@@ -374,9 +381,28 @@ class MainActivity : AppCompatActivity(), IVehicleDataSubscriber {
         // Only do something with incoming values, if the app is in foreground
         if (isInForeground) {
             // Show the new incoming value on the ui
-            txt_info.text = speed.toInt().toString()
+            txt_info.text = speed.toInt().toString() + " km/h"
             if (speed.toInt() >= MAX_SPEED_WARNING) {
-                dropWarningMakerOnMap(1)
+                if (!droppedOverSpeed) {
+                    droppedOverSpeed = true
+                    dropWarningMakerOnMap(WARNING_SPEED)
+                }
+            }
+        }
+    }
+
+    override fun onFuelConsumptionHigh(amount: Float) {
+        Log.i(TAG, "Current total vehicle distance: $amount")
+
+        // Only do something with incoming values, if the app is in foreground
+        if (isInForeground) {
+            // Show the new incoming value on the ui
+            fuel_text.text = amount.toFloat().toString() + " l/h"
+            if (amount.toInt() >= MAX_FUEL_CONSUMPTION_WARNING) {
+                if (!droppedFuelConsumption) {
+                    droppedFuelConsumption = true
+                    dropWarningMakerOnMap(WARNING_FUEL)
+                }
             }
         }
     }

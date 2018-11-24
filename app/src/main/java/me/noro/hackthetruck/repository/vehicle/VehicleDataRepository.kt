@@ -85,6 +85,10 @@ object VehicleDataRepository : IVehicleDataRepository, IVehicleDataPublisher {
                 VehicleClientData.topicList[1] -> {
                     postTotalVehicleDistance(message.valueAsLong)
                 }
+
+                VehicleClientData.topicList[3] -> {
+                    postCurrentFuelConsumption(message.valueAsFloat)
+                }
             }
         }
     }
@@ -95,6 +99,10 @@ object VehicleDataRepository : IVehicleDataRepository, IVehicleDataPublisher {
 
     private fun postTotalVehicleDistance(totalDistance: Long) {
         subscribers.forEach { it.onTotalVehicleDistance(totalDistance) }
+    }
+
+    private fun postCurrentFuelConsumption(amound: Float) {
+        subscribers.forEach { it.onFuelConsumptionHigh(amound) }
     }
 
     override fun register(subscriber: IVehicleDataSubscriber) {
