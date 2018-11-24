@@ -9,6 +9,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.PointF
+import android.media.MediaPlayer
 import android.os.CountDownTimer
 import android.os.Bundle
 import android.speech.RecognitionListener
@@ -42,6 +43,10 @@ import java.util.*
 ///
 // Here we have our basic main activity. This is the entry point of connecting to the vehicle
 ///
+
+//Tablets has no mic now, truck has... mocking audio record instead of doing it
+
+
 class MainActivity : AppCompatActivity(), IVehicleDataSubscriber {
 
 
@@ -56,6 +61,7 @@ class MainActivity : AppCompatActivity(), IVehicleDataSubscriber {
     private var map: Map? = null
     private var mapFragment: MapFragment? = null
     private var speechService: SpeechRecognizer? = null
+    var mediaPlayer: MediaPlayer? = null
     private var droppedOverSpeed = false //just for demo so that we don't get 2 or more markers
     private var droppedFuelConsumption = false //just for demo so that we don't get 2 or more markers
 
@@ -95,6 +101,12 @@ class MainActivity : AppCompatActivity(), IVehicleDataSubscriber {
 
     private fun initialize() {
 
+         mediaPlayer = MediaPlayer.create(applicationContext, R.raw.demo)
+        mediaPlayer?.setOnCompletionListener {
+            playButton.visibility = View.VISIBLE
+            pauseButton.visibility = View.GONE
+        }
+
         speechService = SpeechRecognizer.createSpeechRecognizer(applicationContext)
         speechService?.setRecognitionListener(DriverRecognitionListener())
 
@@ -133,6 +145,20 @@ class MainActivity : AppCompatActivity(), IVehicleDataSubscriber {
 
         dismissButton.setOnClickListener {
             togglePlayBar()
+            playButton.visibility = View.VISIBLE
+            pauseButton.visibility = View.GONE
+        }
+
+        playButton.setOnClickListener {
+            mediaPlayer?.start()
+            playButton.visibility = View.GONE
+            pauseButton.visibility = View.VISIBLE
+        }
+
+        pauseButton.setOnClickListener {
+            mediaPlayer?.stop()
+            playButton.visibility = View.VISIBLE
+            pauseButton.visibility = View.GONE
         }
 
         mapFragment = fragmentManager.findFragmentById(R.id.mapfragment) as? MapFragment
@@ -219,11 +245,6 @@ class MainActivity : AppCompatActivity(), IVehicleDataSubscriber {
             }
 
         })
-
-
-
-
-
 
 
     }
@@ -432,6 +453,8 @@ class MainActivity : AppCompatActivity(), IVehicleDataSubscriber {
         vehicleDataRepository.remove(this)
         speechService?.destroy()
         countDownTimer?.cancel()
+        mediaPlayer?.release()
+        mediaPlayer = null
     }
 
     override fun onResume() {
