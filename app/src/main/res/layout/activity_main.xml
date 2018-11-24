@@ -30,13 +30,17 @@
 
         <TextView
                 android:id="@+id/txt_info"
-                android:layout_width="wrap_content"
+                android:layout_width="180dp"
                 android:layout_height="wrap_content"
                 android:text="@string/txt_speed"
-                app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                android:textAppearance="@style/TextAppearance.AppCompat.Body1" android:lineSpacingExtra="36sp"/>
+                android:textAppearance="@style/TextAppearance.AppCompat.Body1" android:lineSpacingExtra="1sp"
+                app:layout_constraintStart_toStartOf="parent"
+                android:layout_marginRight="8dp" android:layout_marginStart="2dp" android:layout_marginTop="20dp"
+                android:background="@drawable/label_bg" android:fontFamily="monospace"
+                android:textColor="@android:color/background_light" android:textSize="40sp"
+                android:textAlignment="center"/>
         <ImageButton
                 android:layout_width="0dp"
                 android:layout_height="0dp" app:srcCompat="@drawable/btns" android:id="@+id/recordImageButton"
@@ -69,17 +73,18 @@
             android:layout_width="200dp"
             android:layout_height="0dp" app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" app:layout_constraintBottom_toBottomOf="parent"
-            android:id="@+id/playConstraintLayout" android:visibility="invisible">
+            android:id="@+id/playConstraintLayout" android:background="@drawable/back_side">
 
         <Button
                 android:text="X"
                 android:layout_height="wrap_content" android:id="@+id/dismissButton"
                 app:layout_constraintEnd_toEndOf="parent" app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" android:layout_width="0dp" android:textSize="24sp"
-                android:textStyle="bold" android:textColor="@color/colorAccent"/>
+                app:layout_constraintTop_toTopOf="parent" android:layout_width="0dp" android:textSize="44sp"
+                android:textStyle="bold" android:textColor="@color/colorAccent" android:layout_marginEnd="15dp"
+                android:layout_marginStart="6dp" android:background="@drawable/label_bg"/>
         <ImageButton
                 android:layout_width="0dp"
-                android:layout_height="200dp" app:srcCompat="@drawable/map_icon_play"
+                android:layout_height="200dp" app:srcCompat="@drawable/play_btn"
                 android:id="@+id/imageButton" app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent" app:layout_constraintEnd_toEndOf="parent"
                 android:layout_marginEnd="8dp" android:layout_marginStart="8dp" android:scaleType="fitCenter"

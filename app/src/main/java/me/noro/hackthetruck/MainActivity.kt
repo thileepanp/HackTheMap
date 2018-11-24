@@ -43,7 +43,8 @@ import java.util.*
 // Here we have our basic main activity. This is the entry point of connecting to the vehicle
 ///
 class MainActivity : AppCompatActivity(), IVehicleDataSubscriber {
-
+    private val WARNING_SPEED = 100
+    private val MAX_SPEED_WARNING = 94
     private val MAX_COUNTDOWN_TIME: Long = 10000
     private var isRecording = false
     private var countDownTimer: CountDownTimer? = null
@@ -124,6 +125,10 @@ class MainActivity : AppCompatActivity(), IVehicleDataSubscriber {
             dropMakerOnMap()
         }
 
+        dismissButton.setOnClickListener {
+            togglePlayBar()
+        }
+
         mapFragment = fragmentManager.findFragmentById(R.id.mapfragment) as? MapFragment
         mapFragment?.init(object : OnEngineInitListener {
             override fun onEngineInitializationCompleted(error: OnEngineInitListener.Error) {
@@ -193,7 +198,7 @@ class MainActivity : AppCompatActivity(), IVehicleDataSubscriber {
                        override fun onMapObjectsSelected(objects: MutableList<ViewObject>): Boolean {
                            print("ok")
                            for (marker in objects) {
-                               animatePlayBar()
+                               togglePlayBar()
                            }
                            return false
                        }
@@ -285,7 +290,6 @@ class MainActivity : AppCompatActivity(), IVehicleDataSubscriber {
 
         val icons = listOf<Int>(
             R.drawable.map_icon_joke,
-            R.drawable.map_icon_no,
             R.drawable.map_icon_park,
             R.drawable.map_icon_speed,
             R.drawable.map_icon_toilet,
@@ -308,10 +312,39 @@ class MainActivity : AppCompatActivity(), IVehicleDataSubscriber {
         map?.addMapObject(myMapMarker);
     }
 
+    fun dropWarningMakerOnMap(id: Int){
+        var markerIcon = R.drawable.warning_speed_icon
 
-   private fun animatePlayBar() {
-       sideConstraintLayout.visibility = View.GONE
-       playConstraintLayout.visibility = View.VISIBLE
+       when(id) {
+           WARNING_SPEED -> markerIcon = R.drawable.warning_speed_icon
+       }
+
+        val myImage = com.here.android.mpa.common.Image()
+        try {
+            myImage.setImageResource(markerIcon)
+        } catch (e: IOException) {
+            finish()
+        }
+
+        val lat = 60.186 + ((Random().nextInt((9 + 1) - 1) +  1).toFloat() / 100)
+        val lng = 24.827 +  ((Random().nextInt((9 + 1) - 1) +  1).toFloat() / 100)
+
+        val myMapMarker = MapMarker(GeoCoordinate(lat, lng, 0.0),myImage )
+
+        map?.addMapObject(myMapMarker);
+    }
+
+
+
+    private fun togglePlayBar() {
+        if (playConstraintLayout.visibility == View.VISIBLE) {
+            sideConstraintLayout.visibility = View.VISIBLE
+            playConstraintLayout.visibility = View.GONE
+        } else {
+            sideConstraintLayout.visibility = View.GONE
+            playConstraintLayout.visibility = View.VISIBLE
+        }
+       /*
        val constraintSetExpanded = ConstraintSet()
        constraintSetExpanded.clone(playConstraintLayout)
        val constraintSetShink = ConstraintSet()
@@ -320,6 +353,7 @@ class MainActivity : AppCompatActivity(), IVehicleDataSubscriber {
        TransitionManager.beginDelayedTransition(playConstraintLayout)
        val constraint = constraintSetShink
        constraint.applyTo(playConstraintLayout)
+       */
    }
 
     private fun connectVehicle(context: Context) {
@@ -341,6 +375,9 @@ class MainActivity : AppCompatActivity(), IVehicleDataSubscriber {
         if (isInForeground) {
             // Show the new incoming value on the ui
             txt_info.text = speed.toInt().toString()
+            if (speed.toInt() >= MAX_SPEED_WARNING) {
+                dropWarningMakerOnMap(1)
+            }
         }
     }
 
