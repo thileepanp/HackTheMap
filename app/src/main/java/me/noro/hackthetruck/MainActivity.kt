@@ -55,7 +55,7 @@ class MainActivity : AppCompatActivity(), IVehicleDataSubscriber {
     private val WARNING_DISTANCE = 102
     private val MAX_FUEL_CONSUMPTION_WARNING = 44.9
     private val MAX_SPEED_WARNING = 94
-    private val MAX_COUNTDOWN_TIME: Long = 10000
+    private val MAX_COUNTDOWN_TIME: Long = 8000
     private var isRecording = false
     private var countDownTimer: CountDownTimer? = null
     private var map: Map? = null
@@ -119,8 +119,8 @@ class MainActivity : AppCompatActivity(), IVehicleDataSubscriber {
             isRecording = !isRecording
 
             if (isRecording) {
-                startListening()
-
+                //startListening()
+                mockListening()
             }else {
                 speechService?.cancel()
 
@@ -291,6 +291,14 @@ class MainActivity : AppCompatActivity(), IVehicleDataSubscriber {
 
     }
 
+    private fun mockListening() {
+        countDownTextView.text = "${MAX_COUNTDOWN_TIME / 1000}"
+        countDownTextView.visibility = View.VISIBLE
+        micImageView.visibility = View.GONE
+
+        countDownListener()
+    }
+
     fun countDownListener() {
         countDownTimer = object: CountDownTimer(MAX_COUNTDOWN_TIME, 1000) {
             override fun onTick(millisUntilFinished: Long) {
@@ -300,6 +308,7 @@ class MainActivity : AppCompatActivity(), IVehicleDataSubscriber {
             override fun onFinish() {
                 countDownTextView.visibility = View.GONE
                 micImageView.visibility = View.VISIBLE
+                channelConstraintLayout.visibility = View.VISIBLE
             }
         }
 
@@ -310,6 +319,7 @@ class MainActivity : AppCompatActivity(), IVehicleDataSubscriber {
         countDownTimer?.cancel()
         countDownTextView.visibility = View.GONE
         micImageView.visibility = View.VISIBLE
+
     }
 
 
@@ -372,16 +382,7 @@ class MainActivity : AppCompatActivity(), IVehicleDataSubscriber {
             sideConstraintLayout.visibility = View.GONE
             playConstraintLayout.visibility = View.VISIBLE
         }
-       /*
-       val constraintSetExpanded = ConstraintSet()
-       constraintSetExpanded.clone(playConstraintLayout)
-       val constraintSetShink = ConstraintSet()
-       constraintSetShink.clone(playConstraintLayout)
-       constraintSetShink.setTranslationX(R.id.playConstraintLayout, -200.0f)
-       TransitionManager.beginDelayedTransition(playConstraintLayout)
-       val constraint = constraintSetShink
-       constraint.applyTo(playConstraintLayout)
-       */
+
    }
 
     private fun connectVehicle(context: Context) {
