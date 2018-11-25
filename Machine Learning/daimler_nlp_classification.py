@@ -8,7 +8,6 @@ This code uses a training data set with 1798 english scentences mapped to 10
 different classes, to train a text classifier. A neural network with 2 hidden 
 layers is trained to classify this data according to it's classes. 
 
-The model is built with tensorflow background. 
 """
 
 from importlib import reload
